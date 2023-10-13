@@ -6,27 +6,27 @@
 
 ## Project Structure
 
-flashcard-website/
-│
-├── frontend/
-│ ├── src/
-│ │ ├── components/
-│ │ │ ├── CardList.vue
-│ │ │ ├── Flashcard.vue
-│ │ ├── App.vue
-│ │ ├── main.js
-│ ├── package.json
-│
-├── backend/
-│ ├── src/
-│ │ ├── main.rs
-│ │ ├── routes.rs
-│ │ ├── models.rs
-│ │ ├── db.rs
-│ ├── Cargo.toml
-│
-├── .env
-└── README.md
+flashcard-website/  
+│  
+├── frontend/  
+│ ├── src/  
+│ │ ├── components/  
+│ │ │ ├── CardList.vue  
+│ │ │ ├── Flashcard.vue  
+│ │ ├── App.vue  
+│ │ ├── main.js  
+│ ├── package.json  
+│  
+├── backend/  
+│ ├── src/  
+│ │ ├── main.rs  
+│ │ ├── routes.rs  
+│ │ ├── models.rs  
+│ │ ├── db.rs  
+│ ├── Cargo.toml  
+│  
+├── .env  
+└── README.md  
 
 ## Frontend (Vue.js)
 
