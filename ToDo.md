@@ -30,14 +30,14 @@ flashcard-website/
 
 ## Frontend (Vue.js)
 
-- [ ] Create a Vue.js project
+- [x] Create a Vue.js project
 - [ ] Setup some HTTP request lib like Axios
 - [ ] Build comps and all those stuff (editable)
 - [ ] Connect to Rust backend
 
 ## Backend (Rust)
 
-- [ ] Create a new Rust project
+- [x] Create a new Rust project
 - [ ] Setup database connection
 - [ ] Create API routes
 - [ ] Implement the flashcard routes
