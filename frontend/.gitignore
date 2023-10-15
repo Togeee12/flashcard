@@ -1,4 +1,5 @@
 .DS_Store
+node_modules
 /dist
 
 
@@ -23,3 +24,4 @@ pnpm-debug.log*
 
 
 # additional 
+/node_modules
