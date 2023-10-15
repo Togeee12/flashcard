@@ -44,6 +44,6 @@ flashcard-website/
 
 ## Database (MySQL)
 
-- [ ] Create a database
+- [ ] Create a database 
 - [ ] Update .env file with MySQL database connection
 - [ ] Setup all database stuff
