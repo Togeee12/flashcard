@@ -1,9 +1,8 @@
-import Vue from 'vue';
-import App from './App.vue';
+// src/main.js
+import App from './App.svelte';
 
-// axios.defaults.baseURL = 'https://localhost:8000';
-// vue.config.productionTip = false;
+const app = new App({
+    target: document.body,
+});
 
-new Vue({
-    render: (h) => h(App),
-}).$mount('#app');
+export default app;
