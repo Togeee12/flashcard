@@ -1,19 +1,22 @@
-use dotenv;
-use sqlx::MySqlPool;
+use diesel::mysql::MysqlConnection;
+use diesel::prelude::*;
+use dotenv::dotenv;
+use std::env;
+use crate::{models, db};
 
-pub fn initialize_dotenv() {
-    dotenv::from_filename(r"\.env").ok();
+pub async fn establish_connection() -> Result<MysqlConnection, ConnectionError> {
+    dotenv().ok();
+
+    let database_url = env::var("DATABASE_URL")
+        .expect("DATABASE_URL must be set in the .env file");
+
+    MysqlConnection::establish(&database_url)
 }
 
-pub async fn establish_connection() -> Result<MySqlPool, sqlx::Error> {
-    // Define your database URL
-    let database_url = dotenv::var("DATABASE_URL")
-        .expect("DATABASE_URL not found in .env file");
-
-    // Create a database connection pool
-    let pool = MySqlPool::connect(&database_url)
-        .await
-        .expect("Failed to connect to the database");
-
-    Ok(pool)
+pub async fn pseudo_db_call() -> models::FlashCard {
+    models::FlashCard::new(
+        2137, 
+        "O której godzinie umarł papaj".to_owned(), 
+        "21:37".to_owned(),
+    )
 }
