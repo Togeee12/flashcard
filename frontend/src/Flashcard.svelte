@@ -1,7 +1,19 @@
 <script>
-  let question = "Whats up China? Been chillin?";
+  let message = "";
+
+  async function fetchData() {
+    try {
+      const response = await fetch("/api/hello");
+      const data = await response.json();
+      message = data;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
 </script>
 
 <div>
-  <h2>{question}</h2>
+  <button on:click={fetchData}>Fetch Data</button>
+
+  <p>{message}</p>
 </div>
