@@ -38,12 +38,12 @@ flashcard-website/
 ## Backend (Rust)
 
 - [x] Create a new Rust project
-- [ ] Setup database connection
+- [x] Setup database connection
 - [ ] Create API routes
 - [ ] Implement the flashcard routes
 
 ## Database (MySQL)
 
-- [ ] Create a database 
-- [ ] Update .env file with MySQL database connection
-- [ ] Setup all database stuff
+- [x] Create a database 
+- [x] Update .env file with MySQL database connection
+- [x] Setup all database stuff
