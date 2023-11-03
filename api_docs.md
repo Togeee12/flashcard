@@ -369,6 +369,8 @@ Only when returns the ok status is the authentication cookie set.
 #### Request Format
 ##### Types:
 - authenticate
+- check
+- logout
 ##### Content:
 - email
 - password
@@ -383,14 +385,33 @@ Examples:
     }
 }
 ```
+```json
+{
+    "type": "check",
+}
+```
+```json
+{
+    "type": "logout",
+}
+```
 
 #### Response Format
 ##### Content:
 - errors
+- unique_id
 
 ```json
 {
-    "status":"ok"
+    "status": "ok"
+}
+```
+```json
+{
+    "status": "ok",
+    "content": {
+        "unique_id": "dp1OnbRDeP"
+    }
 }
 ```
 ```json

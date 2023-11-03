@@ -1,9 +1,12 @@
+use diesel;
 use diesel::prelude::*;
+use diesel::dsl::exists;
 use diesel::r2d2::{self, ConnectionManager};
 use crate::{models, schema};
 
 /// ## Alias for connection pool type
 pub type Pool = r2d2::Pool<ConnectionManager<MysqlConnection>>;
+pub type Conn = diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<diesel::MysqlConnection>>;
 
 /// ## Function for establishing a pool connection to the database
 ///
@@ -33,6 +36,30 @@ pub fn generate_user_id(conn: &mut MysqlConnection) -> Result<String, diesel::re
         Ok(unique_id) => Ok(unique_id.unique_id),
         Err(err) => Err(err)
     }
+}
+
+/// ## Checks if there is a user with given id
+/// 
+/// ### Arguments
+///
+/// * `conn` - &mut MysqlConnection
+/// * `unique_id` - &str
+///
+/// ### Returns
+/// Result containing **Bool** or **diesel::result::Error**
+pub fn check_if_user_exists(
+    conn: &mut MysqlConnection,
+    id: &str,
+) -> Result<bool, diesel::result::Error> {
+    use schema::users::dsl::*;
+    let exists_query = diesel::select(exists(users.filter(unique_id.eq(id))));
+    
+    match exists_query.get_result(conn) {
+        Ok(result) => Ok(result),
+        Err(diesel::result::Error::NotFound) => Ok(false), // Entry doesn't exist
+        Err(err) => Err(err),
+    }
+
 }
 
 /// ## Inserts a new user record.
@@ -80,17 +107,55 @@ pub fn update_user(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing **models::User** or **diesel::result::Error**
 pub fn get_user(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<models::User, diesel::result::Error> {
     use schema::users::dsl::*;
     users
         .find(id)
+        .first::<models::User>(conn)
+}
+
+/// ## Selects a user record by email
+/// 
+/// ### Arguments
+///
+/// * `conn` - &mut MysqlConnection
+/// * `email` - &str
+///
+/// ### Returns
+/// Result containing **models::User** or **diesel::result::Error**
+pub fn get_user_by_email(
+    conn: &mut MysqlConnection,
+    email: &str,
+) -> Result<models::User, diesel::result::Error> {
+    use schema::users::dsl;
+    dsl::users
+        .filter(dsl::email.eq(email))
+        .first::<models::User>(conn)
+}
+
+/// ## Selects a user record by username
+/// 
+/// ### Arguments
+///
+/// * `conn` - &mut MysqlConnection
+/// * `username` - &str
+///
+/// ### Returns
+/// Result containing **models::User** or **diesel::result::Error**
+pub fn get_user_by_username(
+    conn: &mut MysqlConnection,
+    username: &str,
+) -> Result<models::User, diesel::result::Error> {
+    use schema::users::dsl;
+    dsl::users
+        .filter(dsl::username.eq(username))
         .first::<models::User>(conn)
 }
 
@@ -99,13 +164,13 @@ pub fn get_user(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing number of affected rows or **diesel::result::Error**
 pub fn delete_user(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<usize, diesel::result::Error> {
     use schema::users::dsl::*;
     diesel::delete(users.find(id))
@@ -177,13 +242,13 @@ pub fn update_stack(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing **models::Stack** or **diesel::result::Error**
 pub fn get_stack(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<models::StackFull, diesel::result::Error> {
     use schema::stacks::dsl::*;
     stacks
@@ -196,13 +261,13 @@ pub fn get_stack(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing a Vec of **models::Stack** or **diesel::result::Error**
 pub fn get_stacks_by_owner(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<Vec<models::StackFull>, diesel::result::Error> {
     use schema::stacks::dsl::*;
     stacks
@@ -215,13 +280,13 @@ pub fn get_stacks_by_owner(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing number of affected rows or **diesel::result::Error**
 pub fn delete_stack(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<usize, diesel::result::Error> {
     use schema::stacks::dsl::*;
     diesel::delete(stacks.find(id))
@@ -257,7 +322,7 @@ pub fn generate_card_id(conn: &mut MysqlConnection) -> Result<String, diesel::re
 ///
 /// ### Returns
 /// Result containing number of affected rows or **diesel::result::Error**
-pub fn add_cards(
+pub fn add_card(
     conn: &mut MysqlConnection,
     card_to_insert: models::Card,
 ) -> Result<usize, diesel::result::Error> {
@@ -274,17 +339,17 @@ pub fn add_cards(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `card_to_update` - &models::Card
+/// * `card_to_update` - models::Card
 ///
 /// ### Returns
 /// Result containing number of affected rows or **diesel::result::Error**
 pub fn update_card(
     conn: &mut MysqlConnection,
-    card_to_update: &models::Card,
+    card_to_update: models::Card,
 ) -> Result<usize, diesel::result::Error> {
     use schema::cards::dsl::*;
     diesel::update(cards.find(&card_to_update.unique_id))
-        .set(card_to_update)
+        .set(&card_to_update)
         .execute(conn)
 }
 
@@ -293,13 +358,13 @@ pub fn update_card(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing **models::Card** or **diesel::result::Error**
 pub fn get_card(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<models::Card, diesel::result::Error> {
     use schema::cards::dsl::*;
     cards
@@ -312,13 +377,13 @@ pub fn get_card(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing a Vec of **models::Card** or **diesel::result::Error**
 pub fn get_cards_by_stack(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<Vec<models::Card>, diesel::result::Error> {
     use schema::cards::dsl::*;
     cards
@@ -331,13 +396,13 @@ pub fn get_cards_by_stack(
 /// ### Arguments
 ///
 /// * `conn` - &mut MysqlConnection
-/// * `id` - String
+/// * `id` - &str
 ///
 /// ### Returns
 /// Result containing number of affected rows or **diesel::result::Error**
 pub fn delete_card(
     conn: &mut MysqlConnection,
-    id: String,
+    id: &str,
 ) -> Result<usize, diesel::result::Error> {
     use schema::cards::dsl::*;
     diesel::delete(cards.find(id))
