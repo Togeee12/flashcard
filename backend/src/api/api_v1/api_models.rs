@@ -1,4 +1,5 @@
 use crate::models;
+use std::fmt;
 
 // --- request type
 use serde::Deserialize;
@@ -226,14 +227,14 @@ pub struct StackData {
     pub visibility: bool,
 }
 
-impl Into<StackData> for models::StackFull {
-    fn into(self) -> StackData {
+impl From<models::StackFull> for StackData {
+    fn from(val: models::StackFull) -> Self {
         StackData {
-            unique_id: self.unique_id,
-            name: self.name,
-            cards_count: self.cards_count,
-            tags: self.tags,
-            visibility: self.visibility,
+            unique_id: val.unique_id,
+            name: val.name,
+            cards_count: val.cards_count,
+            tags: val.tags,
+            visibility: val.visibility,
         }
     }
 }
@@ -245,12 +246,12 @@ pub struct CardData {
     pub backside: String,
 }
 
-impl Into<CardData> for models::Card {
-    fn into(self) -> CardData {
+impl From<models::Card> for CardData {
+    fn from(val: models::Card) -> Self {
         CardData {
-            unique_id: self.unique_id,
-            frontside: self.frontside,
-            backside: self.backside,
+            unique_id: val.unique_id,
+            frontside: val.frontside,
+            backside: val.backside,
         }
     }
 }
@@ -307,6 +308,12 @@ pub struct Response {
     pub content: Option<ResponseContent>,
 }
 
+impl fmt::Display for Response {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", serde_json::to_string(&self).unwrap())
+    }
+}
+
 impl Response {
     pub fn new() -> Self {
         Response { 
@@ -334,10 +341,6 @@ impl Response {
                 unique_id: None,
             }),
         }
-    }
-
-    pub fn to_string(&self) -> String {
-        serde_json::to_string(&self).unwrap()
     }
 
     // pub fn push_err(&mut self, error: ResponseErrorValues) {

@@ -4,6 +4,7 @@ use crate::{utils, db, auth, models};
 use actix_web::{web, HttpRequest, HttpResponse};
 use actix_web::cookie::Cookie;
 
+#[allow(clippy::needless_lifetimes)] // False positive
 pub async fn auth_handler<'a>(
     app_data: web::Data<models::AppData<'a>>,
     req: HttpRequest,

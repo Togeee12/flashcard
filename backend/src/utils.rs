@@ -43,7 +43,7 @@ pub fn is_valid_password(password: &str) -> bool {
 /// - no space allowed
 pub fn is_valid_username(username: &str) -> bool {
     let len = username.len();
-    if len < 5 || 25 < len {
+    if ! (5..=25).contains(&len) {
         return false;
     };
 
@@ -54,10 +54,7 @@ pub fn is_valid_username(username: &str) -> bool {
 }
 
 pub fn is_valid_country_code(country_code: &str) -> bool {
-    match country_code {
-        "AFG"|"ALB"|"DZA"|"ASM"|"AND"|"AGO"|"AIA"|"ATA"|"ATG"|"ARG"|"ARM"|"ABW"|"AUS"|"AUT"|"AZE"|"BHS"|"BHR"|"BGD"|"BRB"|"BLR"|"BEL"|"BLZ"|"BEN"|"BMU"|"BTN"|"BOL"|"BES"|"BIH"|"BWA"|"BVT"|"BRA"|"IOT"|"BRN"|"BGR"|"BFA"|"BDI"|"KHM"|"CMR"|"CAN"|"CPV"|"CYM"|"CAF"|"TCD"|"CHL"|"CHN"|"CXR"|"CCK"|"COL"|"COM"|"COG"|"COD"|"COK"|"CRI"|"HRV"|"CUB"|"CUW"|"CYP"|"CZE"|"DNK"|"DJI"|"DMA"|"DOM"|"TLS"|"ECU"|"EGY"|"SLV"|"GNQ"|"ERI"|"EST"|"SWZ"|"ETH"|"FLK"|"FRO"|"FJI"|"FIN"|"FRA"|"GUF"|"PYF"|"ATF"|"GAB"|"GMB"|"GEO"|"DEU"|"GHA"|"GIB"|"GRC"|"GRL"|"GRD"|"GLP"|"GUM"|"GTM"|"GGY"|"GIN"|"GNB"|"GUY"|"HTI"|"HMD"|"VAT"|"HND"|"HKG"|"HUN"|"ISL"|"IND"|"IDN"|"IRN"|"IRQ"|"IRL"|"IMN"|"ISR"|"ITA"|"CIV"|"JAM"|"JPN"|"JEY"|"JOR"|"KAZ"|"KEN"|"KIR"|"PRK"|"KOR"|"KWT"|"KGZ"|"LAO"|"LVA"|"LBN"|"LSO"|"LBR"|"LBY"|"LIE"|"LTU"|"LUX"|"MAC"|"MDG"|"MWI"|"MYS"|"MDV"|"MLI"|"MLT"|"MHL"|"MTQ"|"MRT"|"MUS"|"MYT"|"MEX"|"FSM"|"MDA"|"MCO"|"MNG"|"MNE"|"MSR"|"MAR"|"MOZ"|"MMR"|"NAM"|"NRU"|"NPL"|"NLD"|"NCL"|"NZL"|"NIC"|"NER"|"NGA"|"NIU"|"NFK"|"MNP"|"NOR"|"OMN"|"PAK"|"PLW"|"PSE"|"PAN"|"PNG"|"PRY"|"PER"|"PHL"|"PCN"|"POL"|"PRT"|"PRI"|"QAT"|"MKD"|"ROU"|"RUS"|"RWA"|"REU"|"BLM"|"SHN"|"KNA"|"LCA"|"MAF"|"SPM"|"VCT"|"WSM"|"SMR"|"STP"|"SAU"|"SEN"|"SRB"|"SYC"|"SLE"|"SGP"|"SXM"|"SVK"|"SVN"|"SLB"|"SOM"|"ZAF"|"SGS"|"SSD"|"ESP"|"LKA"|"SDN"|"SUR"|"SJM"|"SWE"|"CHE"|"SYR"|"TWN"|"TJK"|"TZA"|"THA"|"TGO"|"TKL"|"TON"|"TTO"|"TUN"|"TUR"|"TKM"|"TCA"|"TUV"|"UGA"|"UKR"|"ARE"|"GBR"|"USA"|"UMI"|"URY"|"UZB"|"VUT"|"VEN"|"VNM"|"VIR"|"WLF"|"ESH"|"YEM"|"ZMB"|"ZWE" => true,
-        _ => false
-    }
+    matches!(country_code, "AFG"|"ALB"|"DZA"|"ASM"|"AND"|"AGO"|"AIA"|"ATA"|"ATG"|"ARG"|"ARM"|"ABW"|"AUS"|"AUT"|"AZE"|"BHS"|"BHR"|"BGD"|"BRB"|"BLR"|"BEL"|"BLZ"|"BEN"|"BMU"|"BTN"|"BOL"|"BES"|"BIH"|"BWA"|"BVT"|"BRA"|"IOT"|"BRN"|"BGR"|"BFA"|"BDI"|"KHM"|"CMR"|"CAN"|"CPV"|"CYM"|"CAF"|"TCD"|"CHL"|"CHN"|"CXR"|"CCK"|"COL"|"COM"|"COG"|"COD"|"COK"|"CRI"|"HRV"|"CUB"|"CUW"|"CYP"|"CZE"|"DNK"|"DJI"|"DMA"|"DOM"|"TLS"|"ECU"|"EGY"|"SLV"|"GNQ"|"ERI"|"EST"|"SWZ"|"ETH"|"FLK"|"FRO"|"FJI"|"FIN"|"FRA"|"GUF"|"PYF"|"ATF"|"GAB"|"GMB"|"GEO"|"DEU"|"GHA"|"GIB"|"GRC"|"GRL"|"GRD"|"GLP"|"GUM"|"GTM"|"GGY"|"GIN"|"GNB"|"GUY"|"HTI"|"HMD"|"VAT"|"HND"|"HKG"|"HUN"|"ISL"|"IND"|"IDN"|"IRN"|"IRQ"|"IRL"|"IMN"|"ISR"|"ITA"|"CIV"|"JAM"|"JPN"|"JEY"|"JOR"|"KAZ"|"KEN"|"KIR"|"PRK"|"KOR"|"KWT"|"KGZ"|"LAO"|"LVA"|"LBN"|"LSO"|"LBR"|"LBY"|"LIE"|"LTU"|"LUX"|"MAC"|"MDG"|"MWI"|"MYS"|"MDV"|"MLI"|"MLT"|"MHL"|"MTQ"|"MRT"|"MUS"|"MYT"|"MEX"|"FSM"|"MDA"|"MCO"|"MNG"|"MNE"|"MSR"|"MAR"|"MOZ"|"MMR"|"NAM"|"NRU"|"NPL"|"NLD"|"NCL"|"NZL"|"NIC"|"NER"|"NGA"|"NIU"|"NFK"|"MNP"|"NOR"|"OMN"|"PAK"|"PLW"|"PSE"|"PAN"|"PNG"|"PRY"|"PER"|"PHL"|"PCN"|"POL"|"PRT"|"PRI"|"QAT"|"MKD"|"ROU"|"RUS"|"RWA"|"REU"|"BLM"|"SHN"|"KNA"|"LCA"|"MAF"|"SPM"|"VCT"|"WSM"|"SMR"|"STP"|"SAU"|"SEN"|"SRB"|"SYC"|"SLE"|"SGP"|"SXM"|"SVK"|"SVN"|"SLB"|"SOM"|"ZAF"|"SGS"|"SSD"|"ESP"|"LKA"|"SDN"|"SUR"|"SJM"|"SWE"|"CHE"|"SYR"|"TWN"|"TJK"|"TZA"|"THA"|"TGO"|"TKL"|"TON"|"TTO"|"TUN"|"TUR"|"TKM"|"TCA"|"TUV"|"UGA"|"UKR"|"ARE"|"GBR"|"USA"|"UMI"|"URY"|"UZB"|"VUT"|"VEN"|"VNM"|"VIR"|"WLF"|"ESH"|"YEM"|"ZMB"|"ZWE")
 }
 
 /// - 3 - 25 character
@@ -70,14 +67,14 @@ pub fn is_valid_stack_name(stack_name: &str) -> bool {
 }
 
 pub fn parse_tags(tags: &str) -> String {
-    tags.split(",").map(|part| part.trim()).collect::<Vec<&str>>().join(",")
+    tags.split(',').map(|part| part.trim()).collect::<Vec<&str>>().join(",")
 }
 
 /// max 10 of 20 char long tags
 pub fn is_valid_tags(tags: &str) -> bool {
-    let tags_iter = tags.split(",").map(|part| part.trim());
+    let tags_iter = tags.split(',').map(|part| part.trim());
     let tags_len = tags_iter.count();
     if tags_len == 1 { return tags.len() <= 20; }
     else if tags_len > 10 { return false; }
-    ! tags.split(",").map(|part| part.trim()).any(|tag| tag.len() < 1 || 20 < tag.len() )
+    ! tags.split(',').map(|part| part.trim()).any(|tag| 20 < tag.len() )
 }

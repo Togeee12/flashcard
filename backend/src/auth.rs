@@ -23,7 +23,7 @@ impl JwtClaims for Claims {
     }
 
     fn get_exp(&self) -> u64  {
-        self.exp.clone()
+        self.exp
     }
 }
 
@@ -35,10 +35,7 @@ pub fn hash_password(argon2_config: &Argon2, password: &str) -> String {
 
 pub fn verify_password(argon2_config: &Argon2, password: &str, hashed_password: &str) -> bool {
     let parsed_hash = PasswordHash::new(hashed_password).unwrap();
-    match argon2_config.verify_password(password.as_bytes(), &parsed_hash) {
-        Ok(_) => true,
-        _ => false,
-    }
+    argon2_config.verify_password(password.as_bytes(), &parsed_hash).is_ok()
 }
 
 
@@ -64,7 +61,7 @@ pub fn authorize_jwt<C: DeserializeOwned + JwtClaims>(
     token: &str
 ) -> Result<String, ()> {
     // TODO add logic for blacklisting tokens
-    return match decode_jwt::<C>(secret_key, token) {
+    match decode_jwt::<C>(secret_key, token) {
         Ok(claims) => {
             if claims.get_exp() < utils::get_unix_timestamp() {
                 return Err(());

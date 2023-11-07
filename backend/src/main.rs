@@ -2,7 +2,6 @@
 extern crate diesel;
 
 use dotenv::dotenv;
-use env_logger;
 use log::{info, error};
 use std::process::exit;
 
@@ -72,13 +71,7 @@ async fn main() -> std::io::Result<()> {
 
         match socket_str.to_socket_addrs() {
             Ok(mut iter) => {
-                match iter.next() {
-                    Some(socket_addr) => {
-                        if iter.next().is_none() { Some(socket_addr) } 
-                        else { None } // More than one address found
-                    }
-                    _ => None
-                }
+                iter.next().filter(|_| iter.next().is_none())
             }
             Err(_) => None, // Invalid address
         }.unwrap_or_else(|| {

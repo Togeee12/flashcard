@@ -25,6 +25,7 @@ macro_rules! impl_try_from {
     };
 }
 
+#[allow(clippy::needless_lifetimes)] // False positive
 pub async fn users_handler<'a>(
     app_data: web::Data<models::AppData<'a>>,
     req: HttpRequest,

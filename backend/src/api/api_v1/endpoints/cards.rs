@@ -24,6 +24,7 @@ macro_rules! impl_try_from {
     };
 }
 
+#[allow(clippy::needless_lifetimes)] // False positive
 pub async fn cards_handler<'a>(
     app_data: web::Data<models::AppData<'a>>,
     req: HttpRequest,
@@ -236,7 +237,7 @@ pub async fn cards_handler<'a>(
                     visibility: stack_data.visibility,
                 };
 
-                if let Err(_) = db::add_stack(&mut conn, new_stack_data) {
+                if db::add_stack(&mut conn, new_stack_data).is_err() {
                     return Err(ResponseError::InternalError);
                 }
 
@@ -286,7 +287,7 @@ pub async fn cards_handler<'a>(
                     backside: card_data.backside,
                 };
 
-                if let Err(_) = db::add_card(&mut conn, new_card_data) {
+                if db::add_card(&mut conn, new_card_data).is_err() {
                     return Err(ResponseError::InternalError);
                 }
 
@@ -340,7 +341,7 @@ pub async fn cards_handler<'a>(
                 }
 
                 // Send the update call
-                if let Err(_) = db::update_stack(&mut conn, stack_data.into()) {
+                if db::update_stack(&mut conn, stack_data.into()).is_err() {
                     return Err(ResponseError::InternalError);
                 }
 
@@ -394,7 +395,7 @@ pub async fn cards_handler<'a>(
                 }
 
                 // Send the update call
-                if let Err(_) = db::update_card(&mut conn, card_data) {
+                if db::update_card(&mut conn, card_data).is_err() {
                     return Err(ResponseError::InternalError);
                 }
 
@@ -425,7 +426,7 @@ pub async fn cards_handler<'a>(
                 }
 
                 // Send the delete call
-                if let Err(_) = db::delete_stack(&mut conn, &stack_id) {
+                if db::delete_stack(&mut conn, &stack_id).is_err() {
                     return Err(ResponseError::InternalError);
                 }
 
@@ -462,7 +463,7 @@ pub async fn cards_handler<'a>(
                 }
 
                 // Send the delete call
-                if let Err(_) = db::delete_card(&mut conn, &card_id) {
+                if db::delete_card(&mut conn, &card_id).is_err() {
                     return Err(ResponseError::InternalError);
                 }
 

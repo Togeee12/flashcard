@@ -1,7 +1,6 @@
 use crate::{schema::*, db};
 use argon2::Argon2;
 
-use diesel;
 use diesel::prelude::*;
 use diesel::sql_types::VarChar;
 

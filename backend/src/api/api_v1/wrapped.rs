@@ -2,7 +2,6 @@
 
 use crate::api::api_v1::api_models::ResponseError;
 use crate::{utils, db, auth,};
-use serde_json;
 use actix_web::HttpRequest;
 
 pub fn is_ascii(content: &str) -> Result<(), ResponseError> {
@@ -20,7 +19,7 @@ pub fn is_utf8(content: &str) -> Result<(), ResponseError> {
 }
 
 pub fn parse_json<T: serde::de::DeserializeOwned>(content: &str) -> Result<T, ResponseError> {
-    serde_json::from_str::<T>(&content).map_err(|_| ResponseError::ParsingRequestContent)
+    serde_json::from_str::<T>(content).map_err(|_| ResponseError::ParsingRequestContent)
 }
 
 pub fn get_db_conn(pool: &db::Pool) -> Result<db::Conn, ResponseError> {

@@ -1,4 +1,3 @@
-use diesel;
 use diesel::prelude::*;
 use diesel::dsl::exists;
 use diesel::r2d2::{self, ConnectionManager};
