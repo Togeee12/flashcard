@@ -12,10 +12,12 @@ pub type Conn = diesel::r2d2::PooledConnection<diesel::r2d2::ConnectionManager<d
 ///
 /// ### Returns
 /// **db::Pool** type, aka **diesel::r2d2::Pool\<diesel::r2d2::ConnectionManager\<diesel::prelude::MysqlConnection\>\>**
-pub fn establish_connection() -> Pool {
-    let database_url = dotenv::var("DATABASE_URL").expect("DATABASE_URL not set in .env file");
-    let manager = ConnectionManager::<MysqlConnection>::new(database_url);
-    r2d2::Pool::builder().build(manager).expect("Failed to create pool.")
+pub fn establish_connection(url: String) -> Pool {
+    let manager = ConnectionManager::<MysqlConnection>::new(url);
+    r2d2::Pool::builder().build(manager).unwrap_or_else(|err| {
+        eprintln!("Couldn't create a db connection pool.:\n{}", err);
+        std::process::exit(1);
+    })
 }
 
 // --- managing users

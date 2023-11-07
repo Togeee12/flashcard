@@ -85,7 +85,7 @@ pub async fn users_handler<'a>(
                     }
                 }
 
-                // // Try by username
+                // Try by username
                 impl_try_from!( ParsedUserDataByUsername { username: String, });
                 if let Ok(pasrsed_user_data) = ParsedUserDataByUsername::try_from_optional(&content) {
                     if let Ok(user) = db::get_user_by_username(&mut conn, &pasrsed_user_data.username) {
@@ -152,7 +152,7 @@ pub async fn users_handler<'a>(
                 match db::add_user(&mut conn, user) {
                     Ok(_) => {
                         let response_struct = api_models::Response::empty_ok();
-                        return Ok(HttpResponse::BadRequest().content_type("application/json").body(response_struct.to_string()));
+                        return Ok(HttpResponse::Ok().content_type("application/json").body(response_struct.to_string()));
                     }
                     Err(diesel::result::Error::DatabaseError(kind, _)) => {
                         if let DatabaseErrorKind::UniqueViolation = kind {

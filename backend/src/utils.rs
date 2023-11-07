@@ -73,8 +73,11 @@ pub fn parse_tags(tags: &str) -> String {
     tags.split(",").map(|part| part.trim()).collect::<Vec<&str>>().join(",")
 }
 
+/// max 10 of 20 char long tags
 pub fn is_valid_tags(tags: &str) -> bool {
     let tags_iter = tags.split(",").map(|part| part.trim());
-    if tags_iter.count() > 10 { return false; }
-    ! tags.split(",").map(|part| part.trim()).any(|tag| tag.len() > 20 )
+    let tags_len = tags_iter.count();
+    if tags_len == 1 { return tags.len() <= 20; }
+    else if tags_len > 10 { return false; }
+    ! tags.split(",").map(|part| part.trim()).any(|tag| tag.len() < 1 || 20 < tag.len() )
 }

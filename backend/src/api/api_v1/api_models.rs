@@ -162,6 +162,7 @@ pub enum ResponseError {
     #[allow(unused)]
     Debug,
     CouldntAuthenticate,
+    LoggedOut,
     EmailOrUSernameUsed,
     ParsingRequestContent,
     InvalidData,
@@ -175,6 +176,7 @@ impl ResponseError {
         match self {
             ResponseError::Debug =>ResponseErrorValues{c: -1, m: "Debug".to_owned()},
             ResponseError::CouldntAuthenticate =>ResponseErrorValues{c: 300, m: "Couldn't authenticate rquest".to_owned()},
+            ResponseError::LoggedOut =>ResponseErrorValues{c: 301, m: "Logged out".to_owned()},
             ResponseError::EmailOrUSernameUsed =>ResponseErrorValues{c: 310, m: "Email or username already in use".to_owned()},
             ResponseError::ParsingRequestContent =>ResponseErrorValues{c: 400, m: "Error parsing request conent".to_owned()},
             ResponseError::InvalidData =>ResponseErrorValues{c: 410, m: "Invalid content".to_owned()},

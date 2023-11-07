@@ -23,7 +23,7 @@ pub async fn auth_handler<'a>(
                 // Validate input data
                 if ! utils::is_valid_email(&content.email) || 
                     ! utils::is_valid_password(&content.password) {
-                    return Err(ResponseError::InvalidData);
+                    return Err(ResponseError::InvalidEmailOrPw);
                 }
 
                 // Get db connection
@@ -64,7 +64,8 @@ pub async fn auth_handler<'a>(
 
 
             api_models::AuthRequestType::Check => {
-                let user_id = wrapped::authenticate(&req, &app_data.jwt_secret)?;
+                let user_id = wrapped::authenticate(&req, &app_data.jwt_secret)
+                    .map_err(|_| ResponseError::LoggedOut)?;
 
                 Ok(HttpResponse::Ok().body(api_models::Response::empty_ok().set_unique_id(&user_id).to_string()))
             }

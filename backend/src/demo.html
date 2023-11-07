@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Api v1 demo</title>
+</head>
+
+<body style="padding-bottom: 15em;">
+  (Open console)
+
+  <h1>/auth</h1>
+  auth status: 
+  <span id="auth-status">Unknown</span>
+  <br/>
+  my unique id:
+  <span id="unique-id">Unknown</span>
+  <br/><br/>
+  <input type="email" placeholder="email" name="auth-email" id="auth-email">
+  <input type="password" placeholder="password" name="auth-password" id="auth-password">
+  <button type="button" id="authenticate">Log in</button>
+  <br/>
+  <button type="button" id="check">Check</button><br/>
+  <button type="button" id="log-out">Log out</button><br/>
+
+
+  <h1>/users</h1>
+
+  <h3>get_my_profile</h3>
+  <p>Gets both public and private data unlike get_user which gets just public data.</p>
+  <button type="button" id="get-my-profile">Get my profile</button>
+
+  <h3>get_user</h4>
+  <p>Will try to get user by it's unique_id or username but will return an error if both are present</p>
+  <input type="text" placeholder="User unique id" name="get-user-id" id="get-user-id">
+  <button type="button" id="get-user-by-id">Get user</button>
+  <br/>
+  <input type="text" placeholder="Username" name="get-user-username" id="get-user-username">
+  <button type="button" id="get-user-by-username">Get user</button>
+  
+  <h3>create_user</h3>
+  <input type="text" placeholder="Username" name="create-user-username" id="create-user-username"><br/>
+  <input type="text" placeholder="Email" name="create-user-email" id="create-user-email"><br/>
+  <input type="text" placeholder="Password" name="create-user-password" id="create-user-password"><br/>
+  <input type="text" placeholder="Country code (ex. GBR)" name="create-user-country" id="create-user-country"><br/>
+  <button type="button" id="create-user">Create user</button>
+
+  <h3>update_user</h3>
+  <p>Will try to update the profile of the logged in user. All present fields will get updated (if they're valid of course)</p>
+  <input type="text" placeholder="Username" name="update-user-username" id="update-user-username"><br/>
+  <input type="text" placeholder="Email" name="update-user-email" id="update-user-email"><br/>
+  <input type="text" placeholder="Password" name="update-user-password" id="update-user-password"><br/>
+  <input type="text" placeholder="Country code (ex. GBR)" name="update-user-country" id="update-user-country"><br/>
+  <button type="button" id="update-user">Update user</button>
+
+  <h3>delete_user</h3>
+  <p>Deletes currently logged in user</p>
+  <input type="text" placeholder="Password" name="delete-user-password" id="delete-user-password"><br />
+  <button type="button" id="delete-user">Delete user</button>
+
+
+  <h1>/cards</h1>
+  <p>All get requests check permissions</p>
+  <p>tags are comma separated, max number of tags is 10 chars and max length of a single tag is 20 chars. ex. &quot;favourites,my stacks&quot;</p>
+
+  <h3>get_stacks_by_owner_id</h3>
+  <input type="text" placeholder="Owner unique id" name="get-stacks-by-owner-id-id" id="get-stacks-by-owner-id-id"><br/>
+  <button type="button" id="get-stacks-by-owner-id">Get stacks</button>
+
+  <h3>get_stack_by_id</h3>
+  <input type="text" placeholder="Stack unique id" name="get-stack-by-id-id" id="get-stack-by-id-id"><br/>
+  <button type="button" id="get-stack-by-id">Get stack</button>
+
+  <h3>get_cards_by_stack_id</h3>
+  <input type="text" placeholder="Stack unique id" name="get-cards-by-stack-id-id" id="get-cards-by-stack-id-id"><br/>
+  <button type="button" id="get-cards-by-stack-id">Get cards</button>
+
+  <h3>get_card_by_id</h3>
+  <input type="text" placeholder="Card unique id" name="get-card-by-id-id" id="get-card-by-id-id"><br/>
+  <button type="button" id="get-card-by-id">Get card</button>
+
+  <h3>create_stack</h3>
+  <input type="text" placeholder="name" name="create-stack-name" id="create-stack-name"><br/>
+  <input type="text" placeholder="tags" name="create-stack-tags" id="create-stack-tags"><br/>
+  <label for="create-stack-visibility">Visibility (public?):</label>
+  <input type="checkbox" name="create-stack-visibility" id="create-stack-visibility"><br/>
+  <button type="button" id="create-stack">Create stack</button>
+
+  <h3>create_card</h3>
+  <input type="text" placeholder="stack id" name="create-card-stack-id" id="create-card-stack-id"><br/>
+  <input type="text" placeholder="frontside" name="create-card-frontside" id="create-card-frontside"><br/>
+  <input type="text" placeholder="backside" name="create-card-backside" id="create-card-backside"><br/>
+  <button type="button" id="create-card">Create card</button>
+
+  <h3>update_stack</h3>
+  <input type="text" placeholder="stack id" name="update-stack-id" id="update-stack-id"><br/>
+  <input type="text" placeholder="name" name="update-stack-name" id="update-stack-name"><br/>
+  <input type="text" placeholder="tags" name="update-stack-tags" id="update-stack-tags"><br/>
+  <label for="update-stack-visibility-condition">Update visibility?</label>
+  <input type="checkbox" name="update-stack-visibility-condition" id="update-stack-visibility-condition"><br/>
+  <label for="update-stack-visibility">To what value?</label>
+  <input type="checkbox" name="update-stack-visibility" id="update-stack-visibility"><br/>
+  <button type="button" id="update-stack">Update stack</button>
+
+  <h3>update_card</h3>
+  <input type="text" placeholder="card id" name="update-card-id" id="update-card-id"><br/>
+  <input type="text" placeholder="frontside" name="update-card-frontside" id="update-card-frontside"><br/>
+  <input type="text" placeholder="backside" name="update-card-backside" id="update-card-backside"><br/>
+  <button type="button" id="update-card">Update card</button>
+
+  <h3>delete_stack</h3>
+  <input type="text" placeholder="stack id" name="delete-stack-id" id="delete-stack-id"><br/>
+  <button type="button" id="delete-stack">Delete stack</button>
+
+  <h3>delete_card</h3>
+  <input type="text" placeholder="card id" name="delete-card-id" id="delete-card-id"><br/>
+  <button type="button" id="delete-card">Delete card</button>
+
+
+  <script>
+    async function sendCall(endpoint, content) {
+      console.log("Sent ", content, " to", `/${endpoint}`);
+
+      let resp = await fetch(`http://localhost/api/v1/${endpoint}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(content),
+      })
+        .catch(() => {});
+
+      jsonData = await resp.json()
+      console.log(JSON.stringify(jsonData, null, 2));
+
+      return jsonData;
+    }
+
+    // authenticate
+    document.querySelector("#authenticate").addEventListener("click", async () => {
+      let email = document.querySelector("#auth-email").value;
+      let password = document.querySelector("#auth-password").value;
+      
+      let payload = {
+        "type": "authenticate",
+        "content": {
+          "email": email,
+          "password": password,
+        }
+      };
+      let resp = await sendCall("auth", payload);
+
+      if (resp["status"] === "err") return;
+      
+      document.querySelector("#auth-status").innerText = "Logged in";
+      document.querySelector("#unique-id").innerText = resp["content"]["unique_id"];
+    });
+
+    // check
+    document.querySelector("#check").addEventListener("click", async () => {
+      let payload = { "type": "check", };
+      let resp = await sendCall("auth", payload);
+
+      if (resp["status"] === "err") {
+        document.querySelector("#auth-status").innerText = "Logged out";
+        document.querySelector("#unique-id").innerText = "Unknown";
+        return;
+      };
+
+      document.querySelector("#auth-status").innerText = "Logged in";
+      document.querySelector("#unique-id").innerText = resp["content"]["unique_id"];
+    });
+
+    // logout
+    document.querySelector("#log-out").addEventListener("click", async () => {
+      let payload = { "type": "logout", };
+      let resp = await sendCall("auth", payload);
+
+      if (resp["status"] === "ok") {
+        document.querySelector("#auth-status").innerText = "Logged out";
+        document.querySelector("#unique-id").innerText = "Unknown";
+      };
+    });
+
+
+    // get_my_profile
+    document.querySelector("#get-my-profile").addEventListener("click", async () => {
+      let payload = { "type": "get_my_profile", };
+      await sendCall("users", payload);
+    });
+
+    // get_user by id
+    document.querySelector("#get-user-by-id").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#get-user-id").value;
+
+      let payload = {
+        "type": "get_user",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("users", payload);
+    });
+
+    // get_user by username
+    document.querySelector("#get-user-by-username").addEventListener("click", async () => {
+      let username = document.querySelector("#get-user-username").value;
+
+      let payload = {
+        "type": "get_user",
+        "content": {
+          "username": username,
+        },
+      };
+      await sendCall("users", payload);
+    });
+
+    // create_user
+    document.querySelector("#create-user").addEventListener("click", async () => {
+      let username = document.querySelector("#create-user-username").value;
+      let email = document.querySelector("#create-user-email").value;
+      let password = document.querySelector("#create-user-password").value;
+      let country = document.querySelector("#create-user-country").value;
+
+      let payload = {
+        "type": "create_user",
+        "content": {
+          "username": username,
+          "email": email,
+          "password": password,
+          "country": country,
+        },
+      };
+      await sendCall("users", payload);
+    });
+
+    // update_user
+    document.querySelector("#update-user").addEventListener("click", async () => {
+      let username = document.querySelector("#update-user-username").value;
+      let email = document.querySelector("#update-user-email").value;
+      let password = document.querySelector("#update-user-password").value;
+      let country = document.querySelector("#update-user-country").value;
+
+      let content = {};
+      if (username !== "") content["username"] = username;
+      if (email !== "") content["email"] = email;
+      if (password !== "") content["password"] = password;
+      if (country !== "") content["country"] = country;
+
+      let payload = {
+        "type": "update_user",
+        "content": content,
+      };
+      await sendCall("users", payload);
+    });
+
+    // delete_user
+    document.querySelector("#delete-user").addEventListener("click", async () => {
+      let password = document.querySelector("#delete-user-password").value;
+
+      let payload = {
+        "type": "delete_user",
+        "content": {
+          "password": password,
+        },
+      };
+      await sendCall("users", payload);
+    });
+
+
+    // get_stacks_by_owner_id
+    document.querySelector("#get-stacks-by-owner-id").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#get-stacks-by-owner-id-id").value;
+
+      let payload = {
+        "type": "get_stacks_by_owner_id",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // get_stack_by_id
+    document.querySelector("#get-stack-by-id").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#get-stack-by-id-id").value;
+
+      let payload = {
+        "type": "get_stack_by_id",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // get_cards_by_stack_id
+    document.querySelector("#get-cards-by-stack-id").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#get-cards-by-stack-id-id").value;
+
+      let payload = {
+        "type": "get_cards_by_stack_id",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // get_card_by_id
+    document.querySelector("#get-card-by-id").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#get-card-by-id-id").value;
+
+      let payload = {
+        "type": "get_card_by_id",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // create_stack
+    document.querySelector("#create-stack").addEventListener("click", async () => {
+      let name = document.querySelector("#create-stack-name").value;
+      let tags = document.querySelector("#create-stack-tags").value;
+      let visibility = document.querySelector("#create-stack-visibility").checked;
+
+      let payload = {
+        "type": "create_stack",
+        "content": {
+          "name": name,
+          "tags": tags,
+          "visibility": visibility,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // create_card
+    document.querySelector("#create-card").addEventListener("click", async () => {
+      let stackId = document.querySelector("#create-card-stack-id").value;
+      let frontside = document.querySelector("#create-card-frontside").value;
+      let backside = document.querySelector("#create-card-backside").value;
+
+      let payload = {
+        "type": "create_card",
+        "content": {
+          "stack_id": stackId,
+          "frontside": frontside,
+          "backside": backside,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // update_stack
+    document.querySelector("#update-stack").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#update-stack-id").value;
+      let name = document.querySelector("#update-stack-name").value;
+      let tags = document.querySelector("#update-stack-tags").value;
+      let visibilityCondition = document.querySelector("#update-stack-visibility-condition").checked;
+      let visibility = document.querySelector("#update-stack-visibility").checked;
+
+      let content = {"unique_id": uniqueId};
+      if (name !== "") content["name"] = name;
+      if (tags !== "") content["tags"] = tags;
+      if (visibilityCondition) content["visibility"] = visibility;
+
+      let payload = {
+        "type": "update_stack",
+        "content": content,
+      };
+      await sendCall("cards", payload);
+    });
+
+    // update_card
+    document.querySelector("#update-card").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#update-card-id").value;
+      let frontside = document.querySelector("#update-card-frontside").value;
+      let backside = document.querySelector("#update-card-backside").value;
+
+      let content = {"unique_id": uniqueId};
+      if (frontside !== "") content["frontside"] = frontside;
+      if (backside !== "") content["backside"] = backside;
+
+      let payload = {
+        "type": "update_card",
+        "content": content,
+      };
+      await sendCall("cards", payload);
+    });
+
+    // delete_stack
+    document.querySelector("#delete-stack").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#delete-stack-id").value;
+
+      let payload = {
+        "type": "delete_stack",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+
+    // delete_card
+    document.querySelector("#delete-card").addEventListener("click", async () => {
+      let uniqueId = document.querySelector("#delete-card-id").value;
+
+      let payload = {
+        "type": "delete_card",
+        "content": {
+          "unique_id": uniqueId,
+        },
+      };
+      await sendCall("cards", payload);
+    });
+  </script>
+</body>
+
+</html>

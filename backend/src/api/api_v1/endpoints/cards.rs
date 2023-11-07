@@ -54,12 +54,20 @@ pub async fn cards_handler<'a>(
                     _ => return Err(ResponseError::InvalidData),
                 };
 
+                let authorized = {
+                    if let Ok(user_id) = wrapped::authenticate(&req, &app_data.jwt_secret) {
+                        user_id == unique_id
+                    } else { false }
+                };
+
                 let mut stacks = match db::get_stacks_by_owner(&mut conn, &unique_id) {
                     Ok(value) => value,
                     Err(_) => return Err(ResponseError::InternalError)
                 };
 
-                stacks.retain(|elem| elem.visibility);
+                if ! authorized {
+                    stacks.retain(|elem| elem.visibility);
+                }
 
                 let mut response_struct = api_models::Response::new();
                 response_struct.set_stacks(db_stacks_to_resp_stacks(stacks));
@@ -79,7 +87,12 @@ pub async fn cards_handler<'a>(
 
                 let stacks: Vec<api_models::StackData> = match db::get_stack(&mut conn, &unique_id) {
                     Ok(stack) => {
-                        if stack.visibility {
+                        let authorized = {
+                            if let Ok(user_id) = wrapped::authenticate(&req, &app_data.jwt_secret) {
+                                user_id == stack.owner_id
+                            } else { false }
+                        };
+                        if stack.visibility || authorized {
                             db_stacks_to_resp_stacks(vec![stack])
                         } else {
                             Vec::new()
@@ -104,16 +117,27 @@ pub async fn cards_handler<'a>(
                     _ => return Err(ResponseError::InvalidData),
                 };
 
+                // So i dont repeat myself
+                let no_stacks_found = || -> Result<HttpResponse, ResponseError> {
+                    let mut response_struct = api_models::Response::new();
+                    response_struct.set_stacks(vec![]);
+                    Ok(HttpResponse::Ok().content_type("application/json").body(response_struct.to_string()))
+                };
+
                 // We first need to check if that stack exists and if it is public
                 match db::get_stack(&mut conn, &unique_id) {
                     Ok(stack) => {
-                        if ! stack.visibility {
+                        let authorized = {
+                            if let Ok(user_id) = wrapped::authenticate(&req, &app_data.jwt_secret) {
+                                user_id == stack.owner_id
+                            } else { false }
+                        };
+                        if ! stack.visibility && ! authorized {
                             // Stack is private so send a response as if no cards were found
-                            let mut response_struct = api_models::Response::new();
-                            response_struct.set_stacks(vec![]);
-                            return Ok(HttpResponse::Ok().content_type("application/json").body(response_struct.to_string()))
+                            return no_stacks_found();
                         }
                     }
+                    Err(diesel::result::Error::NotFound) => return no_stacks_found(),
                     _ => return Err(ResponseError::InternalError)
                 }
 
@@ -138,21 +162,33 @@ pub async fn cards_handler<'a>(
                     _ => return Err(ResponseError::InvalidData),
                 };
 
+                // So i dont repeat myself
+                let no_cards_found = || -> Result<HttpResponse, ResponseError> {
+                    let mut response_struct = api_models::Response::new();
+                    response_struct.set_cards(vec![]);
+                    Ok(HttpResponse::Ok().content_type("application/json").body(response_struct.to_string()))
+                };
+
                 let card = match db::get_card(&mut conn, &unique_id) {
                     Ok(value) => value,
+                    Err(diesel::result::Error::NotFound) => return no_cards_found(),
                     _ => return Err(ResponseError::InternalError)
                 };
 
                 // Check if the stack that this card belongs to is private
                 match db::get_stack(&mut conn, &card.stack_id) {
                     Ok(stack) => {
-                        if ! stack.visibility {
+                        let authorized = {
+                            if let Ok(user_id) = wrapped::authenticate(&req, &app_data.jwt_secret) {
+                                user_id == stack.owner_id
+                            } else { false }
+                        };
+                        if ! stack.visibility && ! authorized {
                             // Stack is private so send a response as if no card was found
-                            let mut response_struct = api_models::Response::new();
-                            response_struct.set_cards(vec![]);
-                            return Ok(HttpResponse::Ok().content_type("application/json").body(response_struct.to_string()))
+                            return no_cards_found();
                         }
                     }
+                    Err(diesel::result::Error::NotFound) => return no_cards_found(),
                     _ => return Err(ResponseError::InternalError)
                 }
 
@@ -350,6 +386,11 @@ pub async fn cards_handler<'a>(
 
                 if let Some(value) = content.backside {
                     card_data.backside = value
+                }
+
+                // Validate new data
+                if card_data.frontside.len() > 255 || card_data.backside.len() > 255 {
+                    return Err(ResponseError::InvalidData)
                 }
 
                 // Send the update call
